@@ -1,0 +1,39 @@
+# Welcome to Serverless!
+#
+# This file is the main config file for your service.
+# It's very minimal at this point and uses default values.
+# You can always add more config options for more control.
+# We've included some commented out config examples here.
+# Just uncomment any of them to get that config option.
+#
+# For full config options, check the docs:
+#    docs.serverless.com
+#
+# Happy Coding!
+
+service: layer-register-log
+# app and org for use with dashboard.serverless.com
+#app: your-app-name
+#org: your-org-name
+
+# You can pin your service to only deploy with a specific Serverless version
+# Check out our docs for more details
+frameworkVersion: "3"
+
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+    stage: ${opt:stage,'DESA'}
+  region: ${opt:region,'us-east-2'}
+  timeout: 120
+  memorySize: 512
+  environment:
+    REGION: ${self:provider.region}
+    STAGE: ${self:provider.stage}
+layers:
+  registerLog:
+    path: log
+    description: "Layer to collect data to register logs"
+
