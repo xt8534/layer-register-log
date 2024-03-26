@@ -7,84 +7,7 @@ const { UTILS } = require('./util.support')
 const { TIMEZONE_AMERICA_LIMA, YYYY_MM_DD_HH_MM_SS } = require('./constants/common.constants');
 
 module.exports = {
-  async enviarMensajeAwsSns(topicArn, message, messageAttributes = null) {
-    try {
-      Logger.info('----- SNS REQUEST -----');
-      Logger.info(`topicArn: ${JSON.stringify(topicArn)}`);
-      Logger.info(`message: ${JSON.stringify(message)}`);
-      Logger.info(`messageAttributes: ${JSON.stringify(messageAttributes)}`);
-
-      const sns = new awsSdk.SNS();
-
-      let messageString = null;
-      if (typeof message === 'string') {
-        messageString = message;
-      } else if (typeof message === 'object' && message !== null) {
-        messageString = JSON.stringify(message);
-      } else {
-        messageString = String(message);
-      }
-
-      const params = {
-        Message: messageString,
-        TopicArn: topicArn,
-      };
-
-      if (messageAttributes) {
-        params.MessageAttributes = messageAttributes;
-      }
-
-      Logger.info('----- SNS PARAMS -----');
-      Logger.info(`${JSON.stringify(params)}`);
-
-      const data = await sns.publish(params).promise();
-
-      Logger.info('----- SNS RESPONSE -----');
-      Logger.info(`${JSON.stringify(data)}`);
-
-      return {
-        messageId: data.MessageId,
-      };
-    } catch (error) {
-      Logger.info('----- SNS ERROR -----');
-      Logger.info(`Error: ${error}`);
-      return {
-        messageId: null,
-      };
-    }
-  },
-
-  agregarAListaDeVariablesDeEntorno(nombreVariable, objeto) {
-    try {
-      if (!process.env[nombreVariable] || process.env[nombreVariable] === undefined || process.env[nombreVariable] === 'undefined') {
-        process.env[nombreVariable] = '[]';
-      }
-
-      if (typeof objeto !== 'object' || objeto === null || Array.isArray(objeto)) {
-        Logger.error('El objeto proporcionado no es un objeto JSON válido');
-        return false;
-      }
-
-      let listaActual = process.env[nombreVariable];
-      listaActual = JSON.parse(listaActual);
-
-      if (!Array.isArray(listaActual)) {
-        Logger.error('La variable de entorno no contiene un arreglo válido');
-        return false;
-      }
-
-      Logger.info(`Insertar valor a process.env.${nombreVariable}: ${JSON.stringify(objeto)}`);
-      listaActual.push(objeto);
-
-      process.env[nombreVariable] = JSON.stringify(listaActual);
-
-      return true;
-    } catch (error) {
-      Logger.error(`Error al modificar la variable de entorno ${nombreVariable}: ${error}`);
-      return false;
-    }
-  },
-
+  
   async monitorearEventos(payload) {
     const serverlessOffline = process.env.IS_OFFLINE === 'true';
 
@@ -235,6 +158,84 @@ module.exports = {
         statusCode: 500,
         respuesta: 'Error',
       };
+    }
+  },
+
+  async enviarMensajeAwsSns(topicArn, message, messageAttributes = null) {
+    try {
+      Logger.info('----- SNS REQUEST -----');
+      Logger.info(`topicArn: ${JSON.stringify(topicArn)}`);
+      Logger.info(`message: ${JSON.stringify(message)}`);
+      Logger.info(`messageAttributes: ${JSON.stringify(messageAttributes)}`);
+
+      const sns = new awsSdk.SNS();
+
+      let messageString = null;
+      if (typeof message === 'string') {
+        messageString = message;
+      } else if (typeof message === 'object' && message !== null) {
+        messageString = JSON.stringify(message);
+      } else {
+        messageString = String(message);
+      }
+
+      const params = {
+        Message: messageString,
+        TopicArn: topicArn,
+      };
+
+      if (messageAttributes) {
+        params.MessageAttributes = messageAttributes;
+      }
+
+      Logger.info('----- SNS PARAMS -----');
+      Logger.info(`${JSON.stringify(params)}`);
+
+      const data = await sns.publish(params).promise();
+
+      Logger.info('----- SNS RESPONSE -----');
+      Logger.info(`${JSON.stringify(data)}`);
+
+      return {
+        messageId: data.MessageId,
+      };
+    } catch (error) {
+      Logger.info('----- SNS ERROR -----');
+      Logger.info(`Error: ${error}`);
+      return {
+        messageId: null,
+      };
+    }
+  },
+
+  agregarAListaDeVariablesDeEntorno(nombreVariable, objeto) {
+    try {
+      if (!process.env[nombreVariable] || process.env[nombreVariable] === undefined || process.env[nombreVariable] === 'undefined') {
+        process.env[nombreVariable] = '[]';
+      }
+
+      if (typeof objeto !== 'object' || objeto === null || Array.isArray(objeto)) {
+        Logger.error('El objeto proporcionado no es un objeto JSON válido');
+        return false;
+      }
+
+      let listaActual = process.env[nombreVariable];
+      listaActual = JSON.parse(listaActual);
+
+      if (!Array.isArray(listaActual)) {
+        Logger.error('La variable de entorno no contiene un arreglo válido');
+        return false;
+      }
+
+      Logger.info(`Insertar valor a process.env.${nombreVariable}: ${JSON.stringify(objeto)}`);
+      listaActual.push(objeto);
+
+      process.env[nombreVariable] = JSON.stringify(listaActual);
+
+      return true;
+    } catch (error) {
+      Logger.error(`Error al modificar la variable de entorno ${nombreVariable}: ${error}`);
+      return false;
     }
   },
 };
