@@ -130,6 +130,25 @@ module.exports = {
         url_servicio: path,
       };
 
+      // Define OpenTelemetry format
+      const OpenTelemetryMessage = {
+        Timestamp: new Date().toISOString(),
+        ObservedTimestamp:new Date().toISOString(),
+        TraceId:trazabilidadId,
+        SpanId:null || undefined,
+        TraceFlags:null || undefined,
+        SeverityText: logType,
+        SeverityNumber:logType==='ERROR' ? 17: logType==='TRACE'? 2 : null,
+        Body: UTILS.parseJSON(mensaje),
+        Resource: {         
+          host_name: domainName
+        },
+        InstrumentationScope: null || undefined,
+        Attributes: {
+          http_method: httpMethod,
+        }
+      };
+
       Logger.info('Mensaje para Tema SNS:');
       Logger.info(JSON.stringify(mensaje));
 
