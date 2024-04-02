@@ -154,7 +154,7 @@ module.exports = {
       const inicio = moment();
       console.info(`Fecha de inicio: ${inicio.format(YYYY_MM_DD_HH_MM_SS)}`);
 
-      await module.exports.enviarMensajeAwsSns(topicArn, mensaje);
+      await module.exports.sendMessageAwsSns(topicArn, OpenTelemetryMessage);
 
       const fin = moment();
       console.info(`Fecha de fin: ${fin.format(YYYY_MM_DD_HH_MM_SS)}`);
