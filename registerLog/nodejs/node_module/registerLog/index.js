@@ -1,8 +1,7 @@
 const awsSdk = require('aws-sdk');
 const momentTime = require('moment-timezone');
 const moment = require('moment');
-
-const { Logger, Uuid } = Utils;
+const { v4: uuidv4 } = require('uuid');
 const { UTILS } = require('./util.support');
 const { TIMEZONE_AMERICA_LIMA, YYYY_MM_DD_HH_MM_SS } = require('./constants/common.constants');
 
@@ -11,8 +10,8 @@ module.exports = {
   async sensorizeLambdasRequest(payload) {
     const serverlessOffline = process.env.IS_OFFLINE === 'true';
 
-    Logger.info('Payload para Tema SNS:');
-    Logger.info(JSON.stringify(payload));
+    console.info('Payload para Tema SNS:');
+    console.info(JSON.stringify(payload));
 
     if (serverlessOffline) {
       return {
@@ -50,7 +49,7 @@ module.exports = {
     }
 
     if (!topicArn || !nombreLambda) {
-      Logger.error('Faltan variables de entorno necesarias.');
+      console.error('Faltan variables de entorno necesarias.');
       return {
         statusCode: 500,
         respuesta: 'Error de configuración',
@@ -63,7 +62,7 @@ module.exports = {
       } = payload;
 
       if (logType !== 'TRACE' && logType !== 'ERROR') {
-        Logger.error('Tipo de log inválido.');
+        console.error('Tipo de log inválido.');
         return {
           statusCode: 400,
           respuesta: 'Tipo de log inválido',
@@ -74,11 +73,11 @@ module.exports = {
         action = '', body = '', headers = {}, identity = {}, domainName = '', path = '', requestId = '', httpMethod = '',
       } = event;
 
-      Logger.info('Event para Tema SNS:');
-      Logger.info(JSON.stringify(event));
+      console.info('Event para Tema SNS:');
+      console.info(JSON.stringify(event));
 
-      const trazabilidadId = Utils.Uuid.version4();
-      const operationId = Utils.Uuid.version4();
+      const trazabilidadId = uuidv4();
+      const operationId = uuidv4();
 
       const datosCanal = {
         id_broker: idBroker,
@@ -149,29 +148,29 @@ module.exports = {
         }
       };
 
-      Logger.info('Mensaje para Tema SNS:');
-      Logger.info(JSON.stringify(mensaje));
+      console.info('Mensaje para Tema SNS:');
+      console.info(JSON.stringify(mensaje));
 
       const inicio = moment();
-      Logger.info(`Fecha de inicio: ${inicio.format(YYYY_MM_DD_HH_MM_SS)}`);
+      console.info(`Fecha de inicio: ${inicio.format(YYYY_MM_DD_HH_MM_SS)}`);
 
       await module.exports.enviarMensajeAwsSns(topicArn, mensaje);
 
       const fin = moment();
-      Logger.info(`Fecha de fin: ${fin.format(YYYY_MM_DD_HH_MM_SS)}`);
+      console.info(`Fecha de fin: ${fin.format(YYYY_MM_DD_HH_MM_SS)}`);
       const tiempoTranscurrido = moment.duration(fin.diff(inicio));
-      Logger.info(`Tiempo transcurrido: ${tiempoTranscurrido.asMilliseconds()} ms`);
+      console.info(`Tiempo transcurrido: ${tiempoTranscurrido.asMilliseconds()} ms`);
 
       return {
         statusCode: 200,
         respuesta: 'OK',
       };
     } catch (error) {
-      Logger.error('----- ERROR EN MONITOREO -----');
-      Logger.error(`respuesta: ${error}`);
+      console.error('----- ERROR EN MONITOREO -----');
+      console.error(`respuesta: ${error}`);
 
       const fin = moment();
-      Logger.info('Fecha de fin:', fin.format('YYYY-MM-DD HH:mm:ss'));
+      console.info('Fecha de fin:', fin.format('YYYY-MM-DD HH:mm:ss'));
 
       return {
         statusCode: 500,
@@ -187,7 +186,7 @@ module.exports = {
       }
 
       if (typeof objeto !== 'object' || objeto === null || Array.isArray(objeto)) {
-        Logger.error('El objeto proporcionado no es un objeto JSON válido');
+        console.error('El objeto proporcionado no es un objeto JSON válido');
         return false;
       }
 
@@ -195,28 +194,28 @@ module.exports = {
       listaActual = JSON.parse(listaActual);
 
       if (!Array.isArray(listaActual)) {
-        Logger.error('La variable de entorno no contiene un arreglo válido');
+        console.error('La variable de entorno no contiene un arreglo válido');
         return false;
       }
 
-      Logger.info(`Insertar valor a process.env.${nombreVariable}: ${JSON.stringify(objeto)}`);
+      console.info(`Insertar valor a process.env.${nombreVariable}: ${JSON.stringify(objeto)}`);
       listaActual.push(objeto);
 
       process.env[nombreVariable] = JSON.stringify(listaActual);
 
       return true;
     } catch (error) {
-      Logger.error(`Error al modificar la variable de entorno ${nombreVariable}: ${error}`);
+      console.error(`Error al modificar la variable de entorno ${nombreVariable}: ${error}`);
       return false;
     }
   },
 
   async sendMessageAwsSns(topicArn, message, messageAttributes = null) {
     try {
-      Logger.info('----- SNS REQUEST -----');
-      Logger.info(`topicArn: ${JSON.stringify(topicArn)}`);
-      Logger.info(`message: ${JSON.stringify(message)}`);
-      Logger.info(`messageAttributes: ${JSON.stringify(messageAttributes)}`);
+      console.info('----- SNS REQUEST -----');
+      console.info(`topicArn: ${JSON.stringify(topicArn)}`);
+      console.info(`message: ${JSON.stringify(message)}`);
+      console.info(`messageAttributes: ${JSON.stringify(messageAttributes)}`);
 
       const sns = new awsSdk.SNS();
 
@@ -238,20 +237,20 @@ module.exports = {
         params.MessageAttributes = messageAttributes;
       }
 
-      Logger.info('----- SNS PARAMS -----');
-      Logger.info(`${JSON.stringify(params)}`);
+      console.info('----- SNS PARAMS -----');
+      console.info(`${JSON.stringify(params)}`);
 
       const data = await sns.publish(params).promise();
 
-      Logger.info('----- SNS RESPONSE -----');
-      Logger.info(`${JSON.stringify(data)}`);
+      console.info('----- SNS RESPONSE -----');
+      console.info(`${JSON.stringify(data)}`);
 
       return {
         messageId: data.MessageId,
       };
     } catch (error) {
-      Logger.info('----- SNS ERROR -----');
-      Logger.info(`Error: ${error}`);
+      console.info('----- SNS ERROR -----');
+      console.info(`Error: ${error}`);
       return {
         messageId: null,
       };
