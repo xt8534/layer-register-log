@@ -179,7 +179,7 @@ module.exports = {
     }
   },
   
-  sensorizeExternalInnovation(nombreVariable, objeto) {
+  sensorizeExternalInvocation(nombreVariable, objeto) {
     try {
       if (!process.env[nombreVariable] || process.env[nombreVariable] === undefined || process.env[nombreVariable] === 'undefined') {
         process.env[nombreVariable] = '[]';
