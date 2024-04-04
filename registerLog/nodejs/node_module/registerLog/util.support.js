@@ -11,6 +11,15 @@ const parseJSON = (string) => {
   }
 };
 
+const esJsonObjectValido = (string) => {
+  try {
+    const parsedObject = JSON.parse(string);
+    return typeof parsedObject === 'object' && parsedObject !== null;
+  } catch (error) {
+    return false;
+  }
+};
+
 module.exports = {
   UTILS: {
     parseJSON,

@@ -23,7 +23,7 @@ module.exports = {
     const {
       INCIDENTE: numeroIncidente = null,
       INCIDENTE_JIRA: numeroIncidenteJira = null,
-      RECURSOS_EXTERNOS: recursosExternos = null,
+      RECURSOS_EXTERNOS: recursosExternos = null,// Variable de entorno.
       OPERACION: operacion = null,
       BROKER_USERNAME: usuarioBroker,
       SNS_REGISTRO_EVENTOS: topicArn,
@@ -134,15 +134,15 @@ module.exports = {
         Timestamp: new Date().toISOString(),
         ObservedTimestamp:new Date().toISOString(),
         TraceId:trazabilidadId,
-        SpanId:null || undefined,
-        TraceFlags:null || undefined,
+        SpanId:null,
+        TraceFlags:null,
         SeverityText: logType,
         SeverityNumber:logType === 'ERROR'? 17: logType === 'TRACE'? 2 : null,
         Body: UTILS.parseJSON(mensaje),
         Resource: {         
           host_name: domainName
         },
-        InstrumentationScope: null || undefined,
+        InstrumentationScope: null,
         Attributes: {
           http_method: httpMethod,
         }
@@ -179,7 +179,7 @@ module.exports = {
     }
   },
   
-  sensorizeExternalInvocation(nombreVariable, objeto) {
+  sensorizeLambdasExternalInvocation(nombreVariable, objeto) {
     try {
       if (!process.env[nombreVariable] || process.env[nombreVariable] === undefined || process.env[nombreVariable] === 'undefined') {
         process.env[nombreVariable] = '[]';
