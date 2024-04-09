@@ -1,7 +1,7 @@
-# layer-register-log
+# Lib/layer-sensor-lambdas
 Library or Layer that contains two functions:
- --`sensorizeLambdasRequest()`main function to sensorize lambdas request.
---`collectLambdaExternalInvocationData()` support function to collect external invocation data and  add it to the function  sensorizeLambdasRequest().
+*`sensorizeLambdasRequest()`main function to sensorize lambdas request.
+*`collectLambdaExternalInvocationData()` support function to collect external invocation data and  add it to the function  sensorizeLambdasRequest().
 ## Usage
 ```
 const registerLog = require('../registerLog');
@@ -10,10 +10,13 @@ const registerLog = require('../registerLog');
 
 ```sh
 const EventLoggerMiddleware = () => {
+
   const before = async (request) => {
     try {
+    
       const { event } = request;     
       request.originalEvent = event;
+      
     } catch (error) {
       Logger.info(`Error en 'before': ${error.message}`);
     }
@@ -42,11 +45,9 @@ const EventLoggerMiddleware = () => {
         registerLog.sensorizeLambdasRequest({ logType: 'ERROR', event: originalEvent, error: errorInfo });
 
       } else {
-
         after(request);
       }
     } catch (catchError) {
-
       Logger.info(`Error en 'onError': ${catchError.message}`);
     }
   };
@@ -100,8 +101,6 @@ async invokeFunctionSync(functionName, payload, action, config = {}) {
       externalInvocationData.response = error;
 
       module.exports.collectLambdaExternalInvocationData(EXTERNAL_INVOCATION_DATA, externalInvocationData);
-
-     
     }
   },
 ```
