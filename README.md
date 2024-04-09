@@ -65,7 +65,7 @@ module.exports = {  EventLoggerMiddleware};
 
      const { originalEvent, event, response } = request;
 
-      registerLog.sensorizeLambdasRequest({ logType: 'TRACE', event: event, response });
+     registerLog.sensorizeLambdasRequest({ logType: 'TRACE', event: event,response });
 
     } catch (error) {
 
@@ -104,6 +104,7 @@ async invokeFunctionSync(functionName, payload, action, config = {}) {
     }
   },
 ```
-Author:
+### Author:
 -Juan Rojas.
 -César Alfaro.
+
