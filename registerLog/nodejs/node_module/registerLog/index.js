@@ -23,7 +23,8 @@ module.exports = {
     const {
       INCIDENTE: numeroIncidente = null,
       INCIDENTE_JIRA: numeroIncidenteJira = null,
-      RECURSOS_EXTERNOS: recursosExternos = null,// Variable de entorno.
+      // pass EXTERNAL_INVOCATION_DATA ENV value to externalInvocationData variable
+      EXTERNAL_INVOCATION_DATA: externalInvocationData = null,
       OPERACION: operacion = null,
       BROKER_USERNAME: usuarioBroker,
       SNS_REGISTRO_EVENTOS: topicArn,
@@ -121,7 +122,7 @@ module.exports = {
         nombre_canal: 'brokers',
         datos_canal: datosCanal,
         payload_canal: PayloadCanal,
-        recursos_externos: UTILS.parseJSON(recursosExternos),
+        recursos_externos: UTILS.parseJSON(externalInvocationData),
         procedencia,
         ip_visitante: identity.sourceIp || 'desconocida',
         metodo_http: httpMethod,
@@ -200,7 +201,7 @@ module.exports = {
 
       console.info(`Insertar valor a process.env.${nombreVariable}: ${JSON.stringify(objeto)}`);
       listaActual.push(objeto);
-
+      // pass all collected data into env varivale value
       process.env[nombreVariable] = JSON.stringify(listaActual);
 
       return true;

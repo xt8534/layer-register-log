@@ -1,12 +1,28 @@
-# Lib/layer-sensor-lambdas
+# Lib/layer: sensorize-lambdas
 Library or Layer that contains two functions:
 *`sensorizeLambdasRequest()`main function to sensorize lambdas request.
 *`collectLambdaExternalInvocationData()` support function to collect external invocation data and  add it to the function  sensorizeLambdasRequest().
 ## Usage
 ```
-const registerLog = require('../registerLog');
+const sensorLambda = require('../sensorize-lambdas');
 ```
-### In case it is used middeware:
+
+### In case it is not used middleware:  
+```sh
+    try {
+
+     const { originalEvent, event, response } = request;
+
+     sensorLambda.sensorizeLambdasRequest({ logType: 'TRACE', event: event,response });
+
+    } catch (error) {
+
+    sensorLambda.sensorizeLambdasRequest({ logType: 'ERROR', event: event, error: error.message });
+
+    }
+```
+
+### In case it is used middleware:
 
 ```sh
 const EventLoggerMiddleware = () => {
@@ -27,7 +43,7 @@ const EventLoggerMiddleware = () => {
 
       const { originalEvent, event, response } = request;
 
-      registerLog.sensorizeLambdasRequest({ logType: 'TRACE', event: originalEvent, response });
+      sensorLambda.sensorizeLambdasRequest({ logType: 'TRACE', event: originalEvent, response });
 
     } catch (error) {
 
@@ -42,7 +58,7 @@ const EventLoggerMiddleware = () => {
 
       if (error) {
 
-        registerLog.sensorizeLambdasRequest({ logType: 'ERROR', event: originalEvent, error: errorInfo });
+        sensorLambda.sensorizeLambdasRequest({ logType: 'ERROR', event: originalEvent, error: errorInfo });
 
       } else {
         after(request);
@@ -59,22 +75,10 @@ const EventLoggerMiddleware = () => {
 module.exports = {  EventLoggerMiddleware};
 
 ```
-### In case not used moddware:  
-```sh
-    try {
 
-     const { originalEvent, event, response } = request;
+### Implementation support function
+`collectLambdasExternalInvocation()`:
 
-     registerLog.sensorizeLambdasRequest({ logType: 'TRACE', event: event,response });
-
-    } catch (error) {
-
-      registerLog.sensorizeLambdasRequest({ logType: 'ERROR', event: event, error: error.message });
-
-    }
-```
-### implementation:
-`collectLambdasExternalInvocation` function:
 ```sh
 async invokeFunctionSync(functionName, payload, action, config = {}) {
    
@@ -92,7 +96,7 @@ async invokeFunctionSync(functionName, payload, action, config = {}) {
 
       externalInvocationData.response = data;
 
-      registerLog.collectLambdaExternalInvocationData(EXTERNAL_INVOCATION_DATA, externalInvocationData);
+      sensorLambda.collectLambdaExternalInvocationData(EXTERNAL_INVOCATION_DATA, externalInvocationData);
 
       return data.payload;
 
@@ -100,11 +104,15 @@ async invokeFunctionSync(functionName, payload, action, config = {}) {
       
       externalInvocationData.response = error;
 
-      module.exports.collectLambdaExternalInvocationData(EXTERNAL_INVOCATION_DATA, externalInvocationData);
+      sensorLambda.collectLambdaExternalInvocationData(EXTERNAL_INVOCATION_DATA, externalInvocationData);
     }
   },
 ```
-### Author:
--Juan Rojas.
--César Alfaro.
+#### note:
+```sh
+Environment variable: EXTERNAL_INVOCATION_DATA
+```
+## Authors
 
+- Juan Rojas Rojas (juan.rojas@rimac.com.pe)
+- Cesar Alfaro Mendivel (xt8534@rimac.com.pe)
