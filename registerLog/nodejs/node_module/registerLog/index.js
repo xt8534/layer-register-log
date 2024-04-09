@@ -179,7 +179,7 @@ module.exports = {
     }
   },
   
-  sensorizeLambdasExternalInvocation(nombreVariable, objeto) {
+  collectLambdaExternalInvocationData(nombreVariable, objeto) {
     try {
       if (!process.env[nombreVariable] || process.env[nombreVariable] === undefined || process.env[nombreVariable] === 'undefined') {
         process.env[nombreVariable] = '[]';

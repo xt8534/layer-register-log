@@ -1,7 +1,7 @@
 # layer-register-log
 Library or Layer that contains two functions:
  --`sensorizeLambdasRequest()`main function to sensorize lambdas request.
---`collectLambdasExternalInvocation()` support function to collect external invocation information and  add it to the function  sensorizeLambdasRequest().
+--`collectLambdaExternalInvocationData()` support function to collect external invocation data and  add it to the function  sensorizeLambdasRequest().
 ## Usage
 ```
 const registerLog = require('../registerLog');
@@ -21,22 +21,32 @@ const EventLoggerMiddleware = () => {
   
   const after = async (request) => {
     try {
+
       const { originalEvent, event, response } = request;
+
       registerLog.sensorizeLambdasRequest({ logType: 'TRACE', event: originalEvent, response });
+
     } catch (error) {
+
       Logger.info(`Error en 'after': ${error.message}`);
     }
   };
 
   const onError = async (request) => {
+
     try {
       const { originalEvent, error } = request;
+
       if (error) {
+
         registerLog.sensorizeLambdasRequest({ logType: 'ERROR', event: originalEvent, error: errorInfo });
+
       } else {
+
         after(request);
       }
     } catch (catchError) {
+
       Logger.info(`Error en 'onError': ${catchError.message}`);
     }
   };
@@ -46,14 +56,20 @@ const EventLoggerMiddleware = () => {
 };
 
 module.exports = {  EventLoggerMiddleware};
+
 ```
 ### In case not used moddware:  
 ```sh
     try {
+
      const { originalEvent, event, response } = request;
+
       registerLog.sensorizeLambdasRequest({ logType: 'TRACE', event: event, response });
+
     } catch (error) {
+
       registerLog.sensorizeLambdasRequest({ logType: 'ERROR', event: event, error: error.message });
+
     }
 ```
 ### implementation:
@@ -70,16 +86,22 @@ async invokeFunctionSync(functionName, payload, action, config = {}) {
 
     try {
       const lambda = new AWS.Lambda(config);
+
       const data = await lambda.invokeFunctionSync({functionName, payload, action });
+
       externalInvocationData.response = data;
-     registerLog.collectLambdasExternalInvocation(EXTERNAL_INVOCATION_DATA, externalInvocationData);
+
+      registerLog.collectLambdaExternalInvocationData(EXTERNAL_INVOCATION_DATA, externalInvocationData);
+
       return data.payload;
+
     } catch (error) {
       
       externalInvocationData.response = error;
-      module.exports.collectLambdasExternalInvocation(EXTERNAL_INVOCATION_DATA, externalInvocationData);
 
-      throw error;
+      module.exports.collectLambdaExternalInvocationData(EXTERNAL_INVOCATION_DATA, externalInvocationData);
+
+     
     }
   },
 ```
