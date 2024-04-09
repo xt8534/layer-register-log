@@ -1,5 +1,5 @@
-# Lib/layer: sensorize-lambdas
-Library or Layer that contains two functions:
+# Functions: sensorize-lambdas
+The program to sensorize lambdas contains two functions:
 *`sensorizeLambdasRequest()`main function to sensorize lambdas request.
 *`collectLambdaExternalInvocationData()` support function to collect external invocation data and  add it to the function  sensorizeLambdasRequest().
 ## Usage
