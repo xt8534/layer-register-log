@@ -5,7 +5,9 @@ Layer que contiene dos funciones:
 ## Usage
 ---
 const registerLog = require('../registerLog');
+
 ---
+
 ### En caso se esta usando middware como middyjs:
 ---
 const EventLoggerMiddleware = () => {
@@ -21,7 +23,7 @@ const EventLoggerMiddleware = () => {
   const after = async (request) => {
     try {
       const { originalEvent, event, response } = request;
-      registerLog.monitorearEventos({ logType: 'TRACE', event: originalEvent, response });
+      registerLog.sensorizeLambdasRequest({ logType: 'TRACE', event: originalEvent, response });
     } catch (error) {
       Logger.info(`Error en 'after': ${error.message}`);
     }
@@ -32,7 +34,7 @@ const EventLoggerMiddleware = () => {
       const { originalEvent, error } = request;
 
       if (error) {
-        registerLog.monitorearEventos({ logType: 'ERROR', event: originalEvent, error: errorInfo });
+        registerLog.sensorizeLambdasRequest({ logType: 'ERROR', event: originalEvent, error: errorInfo });
       } else {
         after(request);
       }
@@ -51,14 +53,16 @@ const EventLoggerMiddleware = () => {
 module.exports = {
   EventLoggerMiddleware,
 };
+
 ---
+
 ### En caso no se usa middware:  
     try {
      const { originalEvent, event, response } = request;
 
-      registerLog.monitorearEventos({ logType: 'TRACE', event: event, response });
+      registerLog.sensorizeLambdasRequest({ logType: 'TRACE', event: event, response });
     } catch (error) {
-      registerLog.monitorearEventos({ logType: 'ERROR', event: event, error: error.message });
+      registerLog.sensorizeLambdasRequest({ logType: 'ERROR', event: event, error: error.message });
     }
 ---
 
