@@ -2,12 +2,13 @@
 The program to sensorize lambdas contains two functions:
 *`sensorizeLambdasRequest()`main function to sensorize lambdas request.
 *`collectLambdaExternalInvocationData()` support function to collect external invocation data and  add it to the function  sensorizeLambdasRequest().
-## Usage
+# Usage
 ```
-const sensorLambda = require('../sensorize-lambdas');
+const sensorLambda = require('sensorize-lambdas'); or
+import sensorLambda = from 'sensorize-lambdas';
 ```
 
-### In case it is not used middleware:  
+### Implementation in projects that do not use middleware:  
 ```sh
     try {
 
@@ -22,7 +23,7 @@ const sensorLambda = require('../sensorize-lambdas');
     }
 ```
 
-### In case it is used middleware:
+### Implementation in projects that use middleware:
 
 ```sh
 const EventLoggerMiddleware = () => {
@@ -116,3 +117,4 @@ Environment variable: EXTERNAL_INVOCATION_DATA
 
 - Juan Rojas Rojas (juan.rojas@rimac.com.pe)
 - Cesar Alfaro Mendivel (xt8534@rimac.com.pe)
+
